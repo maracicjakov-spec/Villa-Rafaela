@@ -1,5 +1,8 @@
 'use strict';
-// All page text and accessibility labels share this HR/EN dictionary.
+// Owner settings. Enquiries are e-mailed (via FormSubmit) to CONFIG.email once it is filled in.
+const CONFIG={email:'mirja.koljesnikov@gmail.com',bookingUrl:'https://www.booking.com/hotel/hr/villa-rafaela-umag-umag.html'};
+const LANGS=['hr','en','de','it'],LOCALES={hr:'hr_HR',en:'en_GB',de:'de_DE',it:'it_IT'},BOOKING_LANG={hr:'hr',en:'en-gb',de:'de',it:'it'};
+// All page text and accessibility labels share this HR/EN/DE/IT dictionary.
 const translations={
   "hr": {
     "nav_home": "Početna",
@@ -8,7 +11,9 @@ const translations={
     "nav_amenities": "Sadržaji",
     "nav_location": "Lokacija",
     "skip": "Preskoči na sadržaj",
-    "nav_book": "Rezervacija",
+    "nav_book": "Rezervirajte",
+    "bookAria": "Rezervirajte na Booking.com (otvara se u novoj kartici)",
+    "bar_book": "Rezervirajte boravak",
     "hero_location": "UMAG, ISTRA · HRVATSKA",
     "hero_line1": "Vaš privatni",
     "hero_line2": "kutak",
@@ -92,7 +97,7 @@ const translations={
     "booking_label": "IZRAVNO S DOMAĆINOM",
     "booking_head": "Vaš odmor",
     "booking_head2": "počinje ovdje.",
-    "booking_body": "Recite nam kada biste željeli doći. Javite se izravno putem WhatsAppa za dostupnost, cijenu i sve što vas zanima.",
+    "booking_body": "Recite nam kada biste željeli doći. Pošaljite upit izravno domaćinu za dostupnost, cijenu i sve što vas zanima.",
     "call_label": "RADIJE BISTE NAZVALI?",
     "stay_details": "Vaš boravak",
     "checkin": "Dolazak",
@@ -102,11 +107,11 @@ const translations={
     "fullname": "Ime i prezime",
     "contact": "E-mail ili telefon",
     "message": "Vaša poruka (neobavezno)",
-    "send_whatsapp": "Nastavite na WhatsApp",
-    "send_hint": "Upit ćete pregledati i poslati u WhatsAppu.",
-    "reopen": "Otvorite pripremljeni upit",
+    "send": "Pošaljite upit",
+    "sending": "Slanje upita…",
+    "send_hint": "Upit stiže izravno domaćinu na e-mail.",
     "booking_notice": "Slanjem upita rezervacija nije automatski potvrđena. Domaćin će vam odgovoriti s informacijama o dostupnosti i cijeni.",
-    "privacy_note": "Podaci iz obrasca prenose se u WhatsApp tek kada nastavite. Ova stranica ih ne pohranjuje.",
+    "privacy_note": "Podaci iz obrasca šalju se domaćinu e-poštom putem usluge FormSubmit i koriste se samo za odgovor na vaš upit.",
     "footer_place": "Umag, Istra, Hrvatska",
     "footer_contact": "Kontakt i rezervacija",
     "rights": "Sva prava pridržana.",
@@ -159,7 +164,10 @@ const translations={
     "guestInvalid": "Odaberite broj gostiju od 1 do 7.",
     "nameInvalid": "Unesite ime i prezime (najmanje 2 znaka).",
     "contactInvalid": "Unesite valjan e-mail ili telefonski broj.",
-    "ready": "Upit je pripremljen. Pregledajte ga i pritisnite Pošalji u WhatsAppu. Rezervacija još nije potvrđena.",
+    "sent": "Hvala! Vaš upit je poslan. Domaćin će vam se javiti s informacijama o dostupnosti i cijeni. Rezervacija još nije potvrđena.",
+    "sendError": "Upit nije poslan. Pokušajte ponovno ili nas nazovite na +385 98 170 7172.",
+    "notConfigured": "Slanje upita trenutno nije dostupno. Nazovite nas na +385 98 170 7172.",
+    "moreFiltered": "Pogledajte sve fotografije ({n})",
     "formErrors": "Provjerite označena polja prije nastavka.",
     "metaTitle": "Villa Rafaela — Vaš privatni kutak Istre · Umag",
     "metaDescription": "Kamena vila s privatnim bazenom u Umagu. Tri spavaće sobe, mediteranski vrt i terasa za vaš odmor u Istri. Pošaljite upit izravno domaćinu."
@@ -171,7 +179,9 @@ const translations={
     "nav_amenities": "Amenities",
     "nav_location": "Location",
     "skip": "Skip to content",
-    "nav_book": "Enquire",
+    "nav_book": "Book now",
+    "bookAria": "Book on Booking.com (opens in a new tab)",
+    "bar_book": "Book your stay",
     "hero_location": "UMAG, ISTRIA · CROATIA",
     "hero_line1": "Your private",
     "hero_line2": "corner of",
@@ -255,7 +265,7 @@ const translations={
     "booking_label": "DIRECTLY WITH YOUR HOST",
     "booking_head": "Your holiday",
     "booking_head2": "starts here.",
-    "booking_body": "Tell us when you would like to visit. Get in touch directly on WhatsApp for availability, prices and anything you would like to know.",
+    "booking_body": "Tell us when you would like to visit. Send your enquiry directly to your host for availability, prices and anything you would like to know.",
     "call_label": "PREFER A CALL?",
     "stay_details": "Your stay",
     "checkin": "Check-in",
@@ -265,11 +275,11 @@ const translations={
     "fullname": "Full name",
     "contact": "Email or phone",
     "message": "Your message (optional)",
-    "send_whatsapp": "Continue to WhatsApp",
-    "send_hint": "You will review and send your enquiry in WhatsApp.",
-    "reopen": "Open your prepared enquiry",
+    "send": "Send enquiry",
+    "sending": "Sending…",
+    "send_hint": "Your enquiry goes straight to your host by email.",
     "booking_notice": "Sending an enquiry does not automatically confirm your reservation. Your host will reply with availability and pricing information.",
-    "privacy_note": "Your form details are passed to WhatsApp only when you continue. This website does not store them.",
+    "privacy_note": "Your form details are emailed to your host via the FormSubmit service and used only to reply to your enquiry.",
     "footer_place": "Umag, Istria, Croatia",
     "footer_contact": "Contact & enquiries",
     "rights": "All rights reserved.",
@@ -322,19 +332,363 @@ const translations={
     "guestInvalid": "Please select between 1 and 7 guests.",
     "nameInvalid": "Enter your full name (at least 2 characters).",
     "contactInvalid": "Enter a valid email address or phone number.",
-    "ready": "Your enquiry is ready. Review it and press Send in WhatsApp. Your reservation is not yet confirmed.",
+    "sent": "Thank you! Your enquiry has been sent. Your host will get back to you with availability and pricing. Your reservation is not yet confirmed.",
+    "sendError": "Your enquiry was not sent. Please try again or call us on +385 98 170 7172.",
+    "notConfigured": "Sending enquiries is currently unavailable. Please call us on +385 98 170 7172.",
+    "moreFiltered": "View all photographs ({n})",
     "formErrors": "Please check the highlighted fields before continuing.",
     "metaTitle": "Villa Rafaela — Your private corner of Istria · Umag",
     "metaDescription": "A stone villa with a private pool in Umag. Three bedrooms, a Mediterranean garden and terrace for your stay in Istria. Enquire directly with your host."
+  },
+  "de": {
+    "nav_home": "Start",
+    "nav_villa": "Die Villa",
+    "nav_gallery": "Galerie",
+    "nav_amenities": "Ausstattung",
+    "nav_location": "Lage",
+    "skip": "Zum Inhalt springen",
+    "nav_book": "Jetzt buchen",
+    "bookAria": "Auf Booking.com buchen (öffnet in einem neuen Tab)",
+    "bar_book": "Aufenthalt buchen",
+    "hero_location": "UMAG, ISTRIEN · KROATIEN",
+    "hero_line1": "Ihr privates",
+    "hero_line2": "Stück",
+    "hero_line3": "Istrien.",
+    "hero_text": "Ein Steinhaus. Blaue Fensterläden. Zeit nur für Sie.",
+    "explore": "Die Villa entdecken",
+    "enquire": "Anfrage senden",
+    "hero_note": "Eine Villa. Ihr ganz eigener Urlaub.",
+    "alt1": "Villa Rafaela aus Naturstein mit blauen Fensterläden, Sonnenliegen und privatem Pool",
+    "photo_note": "Mittelmeer, ganz persönlich.",
+    "entire": "Die ganze Villa nur für Sie",
+    "bedrooms": "Schlafzimmer",
+    "bathrooms": "Badezimmer",
+    "upTo": "Bis zu 7 Gäste",
+    "privatePool": "Privater Pool",
+    "alt11": "Blick durch den blühenden Garten auf die Steinvilla mit blauen Fensterläden",
+    "intro_caption": "Ein Haus mit istrischem Charakter",
+    "alt12": "Olivenbaum, Blumen und Stein im Garten der Villa",
+    "welcome": "WILLKOMMEN IN DER VILLA RAFAELA",
+    "intro_head1": "Ein Ort, an dem Tage",
+    "intro_head2": "länger dauern.",
+    "intro_lead": "Hinter den blauen Fensterläden, ein anderer Rhythmus.",
+    "intro_body": "In Umag verbindet die Villa Rafaela die Wärme eines Steinhauses mit der einfachen Freude am Urlaub. Morgenkaffee auf der Terrasse, eine Erfrischung im eigenen Pool und Abende, die genug Zeit für Gespräche lassen.",
+    "intro_body2": "Die gesamte Villa gehört während Ihres Aufenthalts Ihnen. Raum für Familie, Freunde und die kleinen Momente, die einen Urlaub unvergesslich machen.",
+    "inside": "Ein Blick hinein",
+    "alt9": "Privater Pool vor der Steinvilla, umgeben von Liegen und blauen Sonnenschirmen",
+    "pool_caption": "Weniger Pläne. Mehr solche Momente.",
+    "outdoor": "LEBEN IM FREIEN",
+    "pool_head1": "Ihr Pool.",
+    "pool_head2": "Ihr Rhythmus.",
+    "pool_body": "Das erste Bad am Morgen. Ein Buch auf der Liege. Mittagessen im Schatten der Terrasse. Hier muss der Tag nicht verplant sein — es genügt, ihn zu genießen.",
+    "pool_tag1": "Privater Außenpool",
+    "pool_tag2": "Garten & Terrasse",
+    "alt15": "Überdachte Terrasse mit Holztisch an der Steinfassade mit blauen Fensterläden",
+    "terrace_caption": "Für lange Gespräche im Schatten",
+    "interior_label": "KOMFORT, DEN MAN SPÜRT",
+    "interior_head": "Raum, um",
+    "interior_head2": "zusammen zu sein.",
+    "interior_intro": "Drei Schlafzimmer, zwei Badezimmer und eine Küche mit Essbereich. Ein Haus für all Ihre kleinen Rituale.",
+    "tab_sleep": "Schlafzimmer",
+    "tab_living": "Gemeinsame Zeit",
+    "tab_kitchen": "Küche & Essbereich",
+    "tab_bath": "Badezimmer",
+    "alt17": "Schlafbereich unter Holzbalken, mit Doppelbett und runden Fenstern",
+    "room_sleep_title": "Morgen ohne Eile.",
+    "room_sleep_body": "Licht durch die Fenster, Holzbalken und ein ruhiger Start in den Tag. Drei Schlafzimmer zum Ausruhen nach einem Tag in Istrien.",
+    "allPhotos": "Alle Fotos",
+    "gallery_label": "DIE VILLA DURCH DAS OBJEKTIV",
+    "gallery_head": "Ein kleiner Einblick in",
+    "gallery_head2": "Ihren Urlaub.",
+    "photographs": "Fotos. Eine Geschichte.",
+    "filter_all": "Alle",
+    "filter_outdoor": "Außen",
+    "filter_pool": "Pool",
+    "filter_interior": "Innen",
+    "filter_bedroom": "Schlafzimmer",
+    "more": "Alle 28 Fotos ansehen",
+    "gallery_tip": "Wählen Sie ein Foto für die Vollbildansicht.",
+    "amenities_label": "KLEINE DETAILS, RUNDUM ERHOLUNG",
+    "amenities_head": "Alles für Ihre",
+    "amenities_head2": "leichten Tage.",
+    "amenities_body": "Der Komfort eines Zuhauses, mit dem Vergnügen, woanders zu sein.",
+    "amenity01": "Privater Außenpool",
+    "amenity02": "Garten & Terrasse",
+    "amenity03": "Voll ausgestattete Küche",
+    "amenity04": "Grillbereich",
+    "amenity05": "Klimaanlage",
+    "amenity06": "WLAN",
+    "amenity07": "Privatparkplatz",
+    "alt13": "Lavendel und gelbe Blumen im Garten der Villa Rafaela",
+    "istria_garden": "Istrien beginnt im Garten.",
+    "location_label": "IHRE ADRESSE IN ISTRIEN",
+    "location_head": "Entdecken Sie",
+    "location_head2": "Umag.",
+    "location_body": "Spaziergänge am Meer, Gassen aus Stein und ein Tisch, an dem man gern etwas länger bleibt. Entdecken Sie Umag in Ihrem eigenen Tempo und kehren Sie dann in Ihren ruhigen Winkel Istriens zurück.",
+    "croatia": "Kroatien",
+    "directions": "Anfahrt",
+    "google_reviews": "10 Google-Bewertungen",
+    "rating_head": "Schöne Eindrücke bleiben.",
+    "rating_note": "Bewertung laut den bereitgestellten Angaben des Google-Profils.",
+    "booking_label": "DIREKT BEIM GASTGEBER",
+    "booking_head": "Ihr Urlaub",
+    "booking_head2": "beginnt hier.",
+    "booking_body": "Sagen Sie uns, wann Sie kommen möchten. Senden Sie Ihre Anfrage direkt an den Gastgeber – zu Verfügbarkeit, Preisen und allem, was Sie wissen möchten.",
+    "call_label": "LIEBER ANRUFEN?",
+    "stay_details": "Ihr Aufenthalt",
+    "checkin": "Anreise",
+    "checkout": "Abreise",
+    "guests": "Anzahl der Gäste",
+    "your_details": "Ihre Angaben",
+    "fullname": "Vor- und Nachname",
+    "contact": "E-Mail oder Telefon",
+    "message": "Ihre Nachricht (optional)",
+    "send": "Anfrage senden",
+    "sending": "Wird gesendet…",
+    "send_hint": "Ihre Anfrage geht per E-Mail direkt an den Gastgeber.",
+    "booking_notice": "Mit dem Absenden der Anfrage ist die Buchung nicht automatisch bestätigt. Der Gastgeber antwortet Ihnen mit Informationen zu Verfügbarkeit und Preis.",
+    "privacy_note": "Die Formulardaten werden über den Dienst FormSubmit per E-Mail an den Gastgeber gesendet und nur zur Beantwortung Ihrer Anfrage verwendet.",
+    "footer_place": "Umag, Istrien, Kroatien",
+    "footer_contact": "Kontakt & Anfrage",
+    "rights": "Alle Rechte vorbehalten.",
+    "backTop": "Nach oben",
+    "alt2": "Grünes Schlafzimmer",
+    "alt3": "Schlafzimmer mit blauer Wand",
+    "alt4": "Doppelbett im blauen Schlafzimmer",
+    "alt5": "Schlafbereich unter Holzbalken",
+    "alt6": "Grüne Liegen im Dachgeschoss",
+    "alt7": "Spielecke im Dachgeschoss",
+    "alt8": "Blick von der Terrasse auf Pool und Garten",
+    "alt10": "Holztreppe im Haus",
+    "alt14": "Gemeinschaftsraum im Dachgeschoss",
+    "alt16": "Rundes Fenster und Spielecke",
+    "alt18": "Detail des blauen Schlafzimmers",
+    "alt19": "Grünes Schlafzimmer mit weißer Bettwäsche",
+    "alt20": "Küche mit Esstisch",
+    "alt21": "Bereich mit Waschmaschine",
+    "alt22": "Badezimmer mit Dusche und zwei Waschbecken",
+    "alt23": "Blick in das größere Badezimmer",
+    "alt24": "Badezimmer mit maritimem Wandmotiv",
+    "alt25": "Badezimmer mit Dusche",
+    "alt26": "Weitere Ansicht des kleineren Badezimmers",
+    "alt27": "WC mit Waschbecken",
+    "alt28": "Pool, vom Schatten der Terrasse aus gesehen",
+    "chooseGuests": "Anzahl der Gäste wählen",
+    "menu": "Menü öffnen",
+    "menuClose": "Menü schließen",
+    "navigation": "Hauptnavigation",
+    "seePhotos": "Fotos ansehen",
+    "rooms": "Räume der Villa",
+    "filter": "Fotos filtern",
+    "lightbox": "Fotogalerie",
+    "close": "Galerie schließen",
+    "prev": "Vorheriges Foto",
+    "next": "Nächstes Foto",
+    "openPhoto": "Foto öffnen",
+    "less": "Weniger Fotos anzeigen",
+    "shown": "angezeigt",
+    "room_living_title": "Zeit für Ihre Liebsten.",
+    "room_living_body": "Unter dem Holzdach ein Ort zum Spielen und Entspannen. Für Gespräche und Momente, in denen es genügt, einfach zusammen zu sein.",
+    "room_kitchen_title": "Am selben Tisch.",
+    "room_kitchen_body": "Eine voll ausgestattete Küche und ein Essbereich für gemeinsame Frühstücke, selbst gekochte Mahlzeiten und den Geschmack Istriens.",
+    "room_bath_title": "Einfach erfrischend.",
+    "room_bath_body": "Zwei Badezimmer mit Duschen. Ruhige Farbtöne und eine praktische Einrichtung für den Alltag Ihres Urlaubs.",
+    "required": "Bitte füllen Sie dieses Feld aus.",
+    "past": "Die Anreise kann nicht in der Vergangenheit liegen.",
+    "dateInvalid": "Bitte geben Sie ein gültiges Datum ein.",
+    "dateOrder": "Die Abreise muss nach der Anreise liegen.",
+    "guestInvalid": "Bitte wählen Sie 1 bis 7 Gäste.",
+    "nameInvalid": "Bitte geben Sie Ihren Vor- und Nachnamen ein (mindestens 2 Zeichen).",
+    "contactInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse oder Telefonnummer ein.",
+    "sent": "Vielen Dank! Ihre Anfrage wurde gesendet. Der Gastgeber meldet sich bei Ihnen mit Informationen zu Verfügbarkeit und Preis. Die Buchung ist noch nicht bestätigt.",
+    "sendError": "Die Anfrage wurde nicht gesendet. Bitte versuchen Sie es erneut oder rufen Sie uns an: +385 98 170 7172.",
+    "notConfigured": "Das Senden von Anfragen ist derzeit nicht verfügbar. Bitte rufen Sie uns an: +385 98 170 7172.",
+    "moreFiltered": "Alle Fotos ansehen ({n})",
+    "formErrors": "Bitte prüfen Sie die markierten Felder.",
+    "metaTitle": "Villa Rafaela — Ihr privates Stück Istrien · Umag",
+    "metaDescription": "Steinvilla mit privatem Pool in Umag. Drei Schlafzimmer, ein mediterraner Garten und eine Terrasse für Ihren Urlaub in Istrien. Senden Sie Ihre Anfrage direkt an den Gastgeber."
+  },
+  "it": {
+    "nav_home": "Home",
+    "nav_villa": "La villa",
+    "nav_gallery": "Galleria",
+    "nav_amenities": "Servizi",
+    "nav_location": "Posizione",
+    "skip": "Vai al contenuto",
+    "nav_book": "Prenota ora",
+    "bookAria": "Prenota su Booking.com (si apre in una nuova scheda)",
+    "bar_book": "Prenota il soggiorno",
+    "hero_location": "UMAGO, ISTRIA · CROAZIA",
+    "hero_line1": "Un angolo",
+    "hero_line2": "d'Istria",
+    "hero_line3": "tutto vostro.",
+    "hero_text": "Una casa in pietra. Persiane blu. Tempo solo per voi.",
+    "explore": "Scoprite la villa",
+    "enquire": "Inviate una richiesta",
+    "hero_note": "Una villa. Una vacanza tutta vostra.",
+    "alt1": "Villa Rafaela in pietra con persiane blu, lettini e piscina privata",
+    "photo_note": "Il Mediterraneo, in chiave personale.",
+    "entire": "L'intera villa solo per voi",
+    "bedrooms": "camere da letto",
+    "bathrooms": "bagni",
+    "upTo": "Fino a 7 ospiti",
+    "privatePool": "Piscina privata",
+    "alt11": "Vista attraverso il giardino fiorito sulla villa in pietra e le persiane blu",
+    "intro_caption": "Una casa dal carattere istriano",
+    "alt12": "Ulivo, fiori e pietra nel giardino della villa",
+    "welcome": "BENVENUTI A VILLA RAFAELA",
+    "intro_head1": "Un luogo dove i giorni",
+    "intro_head2": "durano di più.",
+    "intro_lead": "Dietro le persiane blu, un ritmo diverso.",
+    "intro_body": "A Umago, Villa Rafaela unisce il calore di una casa in pietra al semplice piacere della vacanza. Il caffè del mattino in terrazza, un tuffo nella vostra piscina e serate che lasciano tutto il tempo per chiacchierare.",
+    "intro_body2": "L'intera villa è riservata al vostro soggiorno. Spazio per la famiglia, gli amici e quei piccoli momenti che rendono indimenticabile una vacanza.",
+    "inside": "Date un'occhiata dentro",
+    "alt9": "Piscina privata davanti alla villa in pietra, circondata da lettini e ombrelloni blu",
+    "pool_caption": "Meno programmi. Più momenti come questo.",
+    "outdoor": "VITA ALL'APERTO",
+    "pool_head1": "La vostra piscina.",
+    "pool_head2": "Il vostro ritmo.",
+    "pool_body": "Il primo tuffo del mattino. Un libro sul lettino. Il pranzo all'ombra della terrazza. Qui la giornata non ha bisogno di programmi — basta godersela.",
+    "pool_tag1": "Piscina privata all'aperto",
+    "pool_tag2": "Giardino e terrazza",
+    "alt15": "Terrazza coperta con tavolo in legno accanto alla facciata in pietra e alle persiane blu",
+    "terrace_caption": "Per lunghe conversazioni all'ombra",
+    "interior_label": "UN COMFORT CHE SI SENTE",
+    "interior_head": "Spazio per",
+    "interior_head2": "stare insieme.",
+    "interior_intro": "Tre camere da letto, due bagni e una cucina con zona pranzo. Una casa per tutti i vostri piccoli rituali.",
+    "tab_sleep": "Camere da letto",
+    "tab_living": "Tempo insieme",
+    "tab_kitchen": "Cucina e zona pranzo",
+    "tab_bath": "Bagni",
+    "alt17": "Zona notte sotto le travi in legno, con letto matrimoniale e finestre rotonde",
+    "room_sleep_title": "Mattine senza fretta.",
+    "room_sleep_body": "Luce dalle finestre, travi in legno e un inizio di giornata tranquillo. Tre camere da letto per riposare dopo una giornata in Istria.",
+    "allPhotos": "Tutte le foto",
+    "gallery_label": "LA VILLA ATTRAVERSO L'OBIETTIVO",
+    "gallery_head": "Un piccolo assaggio della",
+    "gallery_head2": "vostra vacanza.",
+    "photographs": "foto. Una storia.",
+    "filter_all": "Tutte",
+    "filter_outdoor": "Esterni",
+    "filter_pool": "Piscina",
+    "filter_interior": "Interni",
+    "filter_bedroom": "Camere",
+    "more": "Vedi tutte le 28 foto",
+    "gallery_tip": "Selezionate una foto per vederla a schermo intero.",
+    "amenities_label": "PICCOLI DETTAGLI, RELAX COMPLETO",
+    "amenities_head": "Tutto per le vostre",
+    "amenities_head2": "giornate leggere.",
+    "amenities_body": "Le comodità di casa, con il piacere di essere altrove.",
+    "amenity01": "Piscina privata all'aperto",
+    "amenity02": "Giardino e terrazza",
+    "amenity03": "Cucina completamente attrezzata",
+    "amenity04": "Zona barbecue",
+    "amenity05": "Aria condizionata",
+    "amenity06": "Wi-Fi",
+    "amenity07": "Parcheggio privato",
+    "alt13": "Lavanda e fiori gialli nel giardino di Villa Rafaela",
+    "istria_garden": "L'Istria inizia in giardino.",
+    "location_label": "IL VOSTRO INDIRIZZO IN ISTRIA",
+    "location_head": "Scoprite",
+    "location_head2": "Umago.",
+    "location_body": "Passeggiate sul mare, vie di pietra e una tavola a cui ci si ferma un po' più a lungo. Scoprite Umago con i vostri tempi e poi tornate nel vostro tranquillo angolo d'Istria.",
+    "croatia": "Croazia",
+    "directions": "Come arrivare",
+    "google_reviews": "10 recensioni Google",
+    "rating_head": "I bei ricordi restano.",
+    "rating_note": "Valutazione secondo i dati forniti del profilo Google.",
+    "booking_label": "DIRETTAMENTE CON IL PROPRIETARIO",
+    "booking_head": "La vostra vacanza",
+    "booking_head2": "inizia qui.",
+    "booking_body": "Diteci quando vorreste venire. Inviate la vostra richiesta direttamente al proprietario per disponibilità, prezzi e qualsiasi altra informazione.",
+    "call_label": "PREFERITE CHIAMARE?",
+    "stay_details": "Il vostro soggiorno",
+    "checkin": "Arrivo",
+    "checkout": "Partenza",
+    "guests": "Numero di ospiti",
+    "your_details": "I vostri dati",
+    "fullname": "Nome e cognome",
+    "contact": "E-mail o telefono",
+    "message": "Il vostro messaggio (facoltativo)",
+    "send": "Invia la richiesta",
+    "sending": "Invio in corso…",
+    "send_hint": "La richiesta arriva direttamente via e-mail al proprietario.",
+    "booking_notice": "L'invio della richiesta non conferma automaticamente la prenotazione. Il proprietario vi risponderà con le informazioni su disponibilità e prezzo.",
+    "privacy_note": "I dati del modulo vengono inviati via e-mail al proprietario tramite il servizio FormSubmit e utilizzati solo per rispondere alla vostra richiesta.",
+    "footer_place": "Umago, Istria, Croazia",
+    "footer_contact": "Contatti e richieste",
+    "rights": "Tutti i diritti riservati.",
+    "backTop": "Torna su",
+    "alt2": "Camera da letto verde",
+    "alt3": "Camera con parete blu",
+    "alt4": "Letto matrimoniale nella camera blu",
+    "alt5": "Zona notte sotto le travi in legno",
+    "alt6": "Lettini verdi nel sottotetto",
+    "alt7": "Angolo giochi nel sottotetto",
+    "alt8": "Vista dalla terrazza sulla piscina e sul giardino",
+    "alt10": "Scala interna in legno",
+    "alt14": "Spazio comune nel sottotetto",
+    "alt16": "Finestra rotonda e angolo giochi",
+    "alt18": "Dettaglio della camera blu",
+    "alt19": "Camera verde con biancheria bianca",
+    "alt20": "Cucina con tavolo da pranzo",
+    "alt21": "Zona lavanderia",
+    "alt22": "Bagno con doccia e doppio lavabo",
+    "alt23": "Vista del bagno più grande",
+    "alt24": "Bagno con motivo marino alla parete",
+    "alt25": "Bagno con doccia",
+    "alt26": "Un'altra vista del bagno più piccolo",
+    "alt27": "WC con lavabo",
+    "alt28": "Piscina vista dall'ombra della terrazza",
+    "chooseGuests": "Selezionate il numero di ospiti",
+    "menu": "Apri il menu",
+    "menuClose": "Chiudi il menu",
+    "navigation": "Navigazione principale",
+    "seePhotos": "Guarda le foto",
+    "rooms": "Spazi della villa",
+    "filter": "Filtra le foto",
+    "lightbox": "Galleria fotografica",
+    "close": "Chiudi la galleria",
+    "prev": "Foto precedente",
+    "next": "Foto successiva",
+    "openPhoto": "Apri la foto",
+    "less": "Mostra meno foto",
+    "shown": "visualizzate",
+    "room_living_title": "Tempo per i vostri cari.",
+    "room_living_body": "Sotto il tetto in legno, uno spazio per giocare e rilassarsi. Per le conversazioni e i momenti in cui basta semplicemente stare insieme.",
+    "room_kitchen_title": "Attorno alla stessa tavola.",
+    "room_kitchen_body": "Una cucina completamente attrezzata e una zona pranzo per colazioni condivise, piatti fatti in casa e i sapori dell'Istria.",
+    "room_bath_title": "Semplice freschezza.",
+    "room_bath_body": "Due bagni con doccia. Toni rilassanti e un arredamento pratico per il ritmo quotidiano della vostra vacanza.",
+    "required": "Compilate questo campo.",
+    "past": "La data di arrivo non può essere nel passato.",
+    "dateInvalid": "Inserite una data valida.",
+    "dateOrder": "La partenza deve essere successiva all'arrivo.",
+    "guestInvalid": "Selezionate da 1 a 7 ospiti.",
+    "nameInvalid": "Inserite nome e cognome (almeno 2 caratteri).",
+    "contactInvalid": "Inserite un indirizzo e-mail o un numero di telefono valido.",
+    "sent": "Grazie! La vostra richiesta è stata inviata. Il proprietario vi risponderà con le informazioni su disponibilità e prezzo. La prenotazione non è ancora confermata.",
+    "sendError": "La richiesta non è stata inviata. Riprovate o chiamateci al +385 98 170 7172.",
+    "notConfigured": "L'invio delle richieste al momento non è disponibile. Chiamateci al +385 98 170 7172.",
+    "moreFiltered": "Vedi tutte le foto ({n})",
+    "formErrors": "Controllate i campi evidenziati.",
+    "metaTitle": "Villa Rafaela — Un angolo d'Istria tutto vostro · Umago",
+    "metaDescription": "Villa in pietra con piscina privata a Umago. Tre camere da letto, un giardino mediterraneo e una terrazza per la vostra vacanza in Istria. Inviate la richiesta direttamente al proprietario."
   }
 };
 const photos=[{"n":1,"width":1479,"height":2000,"widths":[600,1200],"hr":"Kamena vila i privatni bazen","en":"Stone villa and private pool","categories":["outdoor","pool"]},{"n":2,"width":2000,"height":1500,"widths":[600,1200],"hr":"Zelena spavaća soba","en":"Green bedroom","categories":["interior","bedroom"]},{"n":3,"width":2000,"height":1500,"widths":[600,1200],"hr":"Spavaća soba s plavim zidom","en":"Bedroom with a blue feature wall","categories":["interior","bedroom"]},{"n":4,"width":2000,"height":1500,"widths":[600,1200],"hr":"Pogled na bračni krevet u plavoj sobi","en":"Double bed in the blue bedroom","categories":["interior","bedroom"]},{"n":5,"width":2000,"height":1500,"widths":[600,1200],"hr":"Spavaći prostor pod drvenim gredama","en":"Sleeping space under timber beams","categories":["interior","bedroom"]},{"n":6,"width":2000,"height":1500,"widths":[600,1200],"hr":"Zeleni ležajevi u potkrovlju","en":"Green daybeds in the attic","categories":["interior","bedroom"]},{"n":7,"width":2000,"height":1500,"widths":[600,1200],"hr":"Kutak za igru u potkrovlju","en":"Play corner in the attic","categories":["interior","bedroom"]},{"n":8,"width":2000,"height":1500,"widths":[600,1200],"hr":"Pogled s terase na bazen i vrt","en":"Pool and garden seen from the terrace","categories":["outdoor","pool"]},{"n":9,"width":1500,"height":2000,"widths":[600,1200],"hr":"Bazen, ležaljke i kamena fasada","en":"Pool, loungers and stone facade","categories":["outdoor","pool"]},{"n":10,"width":1500,"height":2000,"widths":[600,1200],"hr":"Drveno unutarnje stubište","en":"Interior wooden staircase","categories":["interior"]},{"n":11,"width":956,"height":1263,"widths":[600,956],"hr":"Vila iza mediteranskog vrta","en":"Villa beyond the Mediterranean garden","categories":["outdoor"]},{"n":12,"width":1500,"height":2000,"widths":[600,1200],"hr":"Maslina i cvijeće među kamenjem","en":"Olive tree and flowers among the stones","categories":["outdoor"]},{"n":13,"width":1500,"height":2000,"widths":[600,1200],"hr":"Lavanda i žuto vrtno cvijeće","en":"Lavender and yellow garden flowers","categories":["outdoor"]},{"n":14,"width":1500,"height":2000,"widths":[600,1200],"hr":"Prostor za druženje u potkrovlju","en":"Shared space in the attic","categories":["interior","bedroom"]},{"n":15,"width":1500,"height":2000,"widths":[600,1200],"hr":"Natkrivena terasa i vanjski stol","en":"Covered terrace and outdoor dining table","categories":["outdoor"]},{"n":16,"width":1500,"height":2000,"widths":[600,1200],"hr":"Okrugli prozor i kutak za igru","en":"Circular window and play corner","categories":["interior"]},{"n":17,"width":2000,"height":1500,"widths":[600,1200],"hr":"Bračni krevet pod drvenim gredama","en":"Double bed beneath exposed timber beams","categories":["interior","bedroom"]},{"n":18,"width":1104,"height":1079,"widths":[600,1104],"hr":"Detalj plave spavaće sobe","en":"Detail of the blue bedroom","categories":["interior","bedroom"]},{"n":19,"width":2000,"height":1500,"widths":[600,1200],"hr":"Zelena spavaća soba s bijelom posteljinom","en":"Green bedroom with white bed linen","categories":["interior","bedroom"]},{"n":20,"width":2000,"height":1500,"widths":[600,1200],"hr":"Kuhinja s blagovaonskim stolom","en":"Kitchen with a dining table","categories":["interior"]},{"n":21,"width":1500,"height":2000,"widths":[600,1200],"hr":"Prostor s perilicom rublja","en":"Laundry area","categories":["interior"]},{"n":22,"width":1105,"height":819,"widths":[600,1105],"hr":"Kupaonica s tušem i dva umivaonika","en":"Bathroom with shower and twin basins","categories":["interior"]},{"n":23,"width":1500,"height":2000,"widths":[600,1200],"hr":"Pogled u veću kupaonicu","en":"View into the larger bathroom","categories":["interior"]},{"n":24,"width":2000,"height":1500,"widths":[600,1200],"hr":"Kupaonica s morskim zidnim motivom","en":"Bathroom with a coastal wall mural","categories":["interior"]},{"n":25,"width":1113,"height":1498,"widths":[600,1113],"hr":"Kupaonica s tušem","en":"Bathroom with a shower","categories":["interior"]},{"n":26,"width":1500,"height":2000,"widths":[600,1200],"hr":"Drugi pogled na manju kupaonicu","en":"Another view of the smaller bathroom","categories":["interior"]},{"n":27,"width":1108,"height":1079,"widths":[600,1108],"hr":"Toalet s umivaonikom","en":"Toilet and washbasin","categories":["interior"]},{"n":28,"width":1096,"height":839,"widths":[600,1096],"hr":"Bazen gledan iz hlada terase","en":"Pool viewed from the shaded terrace","categories":["outdoor","pool"]}];
+const photoCaptions={
+  de:['Steinvilla und privater Pool','Grünes Schlafzimmer','Schlafzimmer mit blauer Wand','Doppelbett im blauen Schlafzimmer','Schlafbereich unter Holzbalken','Grüne Liegen im Dachgeschoss','Spielecke im Dachgeschoss','Blick von der Terrasse auf Pool und Garten','Pool, Liegen und Steinfassade','Holztreppe im Haus','Die Villa hinter dem mediterranen Garten','Olivenbaum und Blumen zwischen Steinen','Lavendel und gelbe Gartenblumen','Gemeinschaftsraum im Dachgeschoss','Überdachte Terrasse mit Esstisch im Freien','Rundes Fenster und Spielecke','Doppelbett unter sichtbaren Holzbalken','Detail des blauen Schlafzimmers','Grünes Schlafzimmer mit weißer Bettwäsche','Küche mit Esstisch','Bereich mit Waschmaschine','Badezimmer mit Dusche und zwei Waschbecken','Blick in das größere Badezimmer','Badezimmer mit maritimem Wandmotiv','Badezimmer mit Dusche','Weitere Ansicht des kleineren Badezimmers','WC mit Waschbecken','Pool, vom Schatten der Terrasse aus gesehen'],
+  it:['Villa in pietra e piscina privata','Camera da letto verde','Camera con parete blu','Letto matrimoniale nella camera blu','Zona notte sotto le travi in legno','Lettini verdi nel sottotetto','Angolo giochi nel sottotetto','Vista dalla terrazza sulla piscina e sul giardino','Piscina, lettini e facciata in pietra','Scala interna in legno','La villa oltre il giardino mediterraneo','Ulivo e fiori tra le pietre','Lavanda e fiori gialli del giardino','Spazio comune nel sottotetto','Terrazza coperta e tavolo all\'aperto','Finestra rotonda e angolo giochi','Letto matrimoniale sotto le travi a vista','Dettaglio della camera blu','Camera verde con biancheria bianca','Cucina con tavolo da pranzo','Zona lavanderia','Bagno con doccia e doppio lavabo','Vista del bagno più grande','Bagno con motivo marino alla parete','Bagno con doccia','Un\'altra vista del bagno più piccolo','WC con lavabo','Piscina vista dall\'ombra della terrazza']
+};
+photos.forEach((p,i)=>{p.de=photoCaptions.de[i];p.it=photoCaptions.it[i];});
 const galleryOrder=[8,3,15,20,13,22,19,11,9,1,17,2,4,5,6,7,10,12,14,16,18,21,23,24,25,26,27,28];
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 let language='hr', category='all', expanded=false, room='sleep', slide=0, lightboxPhotos=[], lastPhotoTrigger=null;
 const header=$('#header'), menu=$('.menu-toggle'), navigation=$('#navigation'), dialog=$('#lightbox'), grid=$('#gallery-grid');
 const form=$('#booking-form'), fields=['checkin','checkout','guests','fullname','contact'];
-let submitted=false, prepared=false;
+let submitted=false, sending=false, statusKey='';
 const t=key=>translations[language][key] || key;
 const imgPath=(n,width)=>'assets/villa-rafaela-umag-umag-pic-'+n+'-'+width+'.webp';
 const originalPath=n=>'villa-rafaela-umag-umag-pic-'+n+'.jpg';
@@ -342,7 +696,7 @@ function setPhoto(image,n,sizes='(max-width: 700px) 100vw, 65vw'){
   const p=photos[n-1]; image.src=imgPath(n,p.widths[1]);image.srcset=imgPath(n,600)+' 600w, '+imgPath(n,p.widths[1])+' '+p.widths[1]+'w';image.sizes=sizes;image.width=p.width;image.height=p.height;image.alt=t('alt'+n);image.dataset.alt='alt'+n;
 }
 function setLanguage(next){
-  language=next==='en'?'en':'hr';document.documentElement.lang=language;
+  language=LANGS.includes(next)?next:'hr';document.documentElement.lang=language;
   try{localStorage.setItem('rafaela-language',language);}catch{}
   $$('[data-i18n]').forEach(el=>el.textContent=t(el.dataset.i18n));
   $$('[data-alt]').forEach(el=>el.alt=t(el.dataset.alt));
@@ -351,9 +705,10 @@ function setLanguage(next){
   navigation.setAttribute('aria-label',t('navigation'));updateMenuLabel();
   document.title=t('metaTitle');$('meta[name="description"]').content=t('metaDescription');
   $('meta[property="og:title"]').content=t('metaTitle');$('meta[property="og:description"]').content=t('metaDescription');
-  $('meta[property="og:image:alt"]').content=t('alt1');$('meta[property="og:locale"]').content=language==='hr'?'hr_HR':'en_GB';$('meta[property="og:locale:alternate"]').content=language==='hr'?'en_GB':'hr_HR';
+  $('meta[property="og:image:alt"]').content=t('alt1');$('meta[property="og:locale"]').content=LOCALES[language];$('meta[property="og:locale:alternate"]').content=language==='hr'?'en_GB':'hr_HR';
+  $$('[data-booking]').forEach(a=>a.href=CONFIG.bookingUrl+'?lang='+BOOKING_LANG[language]);
   renderGallery();updateRoom();if(dialog.open)showSlide(slide);
-  if(submitted)validateForm(false);if(prepared){$('#form-status').textContent=t('ready');$('#whatsapp-fallback').href=buildWhatsAppURL();}
+  if(submitted)validateForm(false);setStatus(statusKey);
 }
 $$('[data-lang]').forEach(el=>el.addEventListener('click',()=>setLanguage(el.dataset.lang)));
 function updateMenuLabel(){menu.setAttribute('aria-label',t(header.classList.contains('menu-open')?'menuClose':'menu'));}
@@ -376,7 +731,7 @@ function renderGallery(){
   $$('[data-filter]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.filter===category)));
   $('#gallery-count').textContent=Math.min(limit,list.length)+' / '+list.length+' '+t('shown');
   const more=$('#gallery-more');more.hidden=list.length<=6;more.firstElementChild.textContent=t(expanded?'less':'more');more.lastElementChild.textContent=expanded?'−':'+';
-  if(category!=='all'&&!expanded)more.firstElementChild.textContent=language==='hr'?'Pogledajte sve fotografije ('+list.length+')':'View all photographs ('+list.length+')';
+  if(category!=='all'&&!expanded)more.firstElementChild.textContent=t('moreFiltered').replace('{n}',list.length);
 }
 $$('[data-filter]').forEach(button=>button.addEventListener('click',()=>{category=button.dataset.filter;expanded=false;renderGallery();}));
 $('#gallery-more').addEventListener('click',()=>{expanded=!expanded;renderGallery();if(!expanded)$('#galerija').scrollIntoView({behavior:matchMedia('(prefers-reduced-motion:reduce)').matches?'instant':'smooth'});});
@@ -397,17 +752,32 @@ function updateDateLimits(){const today=dateString(new Date());$('#checkin').min
 updateDateLimits();$('#checkin').addEventListener('change',updateDateLimits);addEventListener('focus',updateDateLimits);
 function errorFor(id){const value=$('#'+id).value.trim();if(!value)return 'required';if(id==='checkin'||id==='checkout'){if(!validDate(value))return 'dateInvalid';if(id==='checkin'&&value<dateString(new Date()))return 'past';if(id==='checkout'&&value<=($('#checkin').value||dateString(new Date())))return 'dateOrder';}if(id==='guests'&&(!Number.isInteger(Number(value))||Number(value)<1||Number(value)>7))return 'guestInvalid';if(id==='fullname'&&value.length<2)return 'nameInvalid';if(id==='contact'){const email=/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value),phone=/^\+?[\d\s().-]+$/.test(value)&&value.replace(/\D/g,'').length>=7&&value.replace(/\D/g,'').length<=15;if(!email&&!phone)return 'contactInvalid';}return '';}
 function displayError(id){const key=errorFor(id);$('#'+id+'-error').textContent=key?t(key):'';$('#'+id).setAttribute('aria-invalid',String(!!key));return !key;}
-function validateForm(focus){updateDateLimits();const invalid=fields.filter(id=>!displayError(id));if(invalid.length){$('#form-status').textContent=t('formErrors');if(focus)$('#'+invalid[0]).focus();return false;}if(!prepared)$('#form-status').textContent='';return true;}
-fields.forEach(id=>$('#'+id).addEventListener('input',()=>{if(prepared){prepared=false;$('#whatsapp-fallback').hidden=true;$('#form-status').textContent='';}if(submitted){displayError(id);if(id==='checkin')displayError('checkout');}}));
-$('#message').addEventListener('input',()=>{prepared=false;$('#whatsapp-fallback').hidden=true;$('#form-status').textContent='';});
-function buildWhatsAppURL(){
-  const values=Object.fromEntries(new FormData(form));const format=value=>new Intl.DateTimeFormat(language==='hr'?'hr-HR':'en-GB',{day:'numeric',month:'long',year:'numeric'}).format(new Date(value+'T12:00:00'));
-  const lines=language==='hr'?['Poštovani, želio/željela bih poslati upit za boravak u Villi Rafaela.','','Dolazak: '+format(values.checkin),'Odlazak: '+format(values.checkout),'Broj gostiju: '+values.guests,'Ime i prezime: '+values.fullname.trim(),'Kontakt: '+values.contact.trim()]:['Hello, I would like to enquire about a stay at Villa Rafaela.','','Check-in: '+format(values.checkin),'Check-out: '+format(values.checkout),'Number of guests: '+values.guests,'Full name: '+values.fullname.trim(),'Contact: '+values.contact.trim()];
-  if(values.message.trim())lines.push('',(language==='hr'?'Poruka: ':'Message: ')+values.message.trim());
-  lines.push('',language==='hr'?'Molim informacije o dostupnosti i cijeni za navedene datume. Hvala!':'Please let me know the availability and price for these dates. Thank you!');
-  return 'https://wa.me/385981707172?text='+encodeURIComponent(lines.join('\n'));
+function setStatus(key){statusKey=key;$('#form-status').textContent=key?t(key):'';}
+function validateForm(focus){updateDateLimits();const invalid=fields.filter(id=>!displayError(id));if(invalid.length){setStatus('formErrors');if(focus)$('#'+invalid[0]).focus();return false;}if(statusKey==='formErrors')setStatus('');return true;}
+fields.forEach(id=>$('#'+id).addEventListener('input',()=>{if(submitted){displayError(id);if(id==='checkin')displayError('checkout');}}));
+// The e-mail goes to the host, so its labels stay in Croatian whatever the page language.
+function enquiryPayload(){
+  const values=Object.fromEntries(new FormData(form)),contact=values.contact.trim();const format=value=>new Intl.DateTimeFormat('hr-HR',{day:'numeric',month:'long',year:'numeric'}).format(new Date(value+'T12:00:00'));
+  const payload={_subject:'Novi upit — Villa Rafaela ('+format(values.checkin)+' – '+format(values.checkout)+')',_template:'table','Ime i prezime':values.fullname.trim(),'Kontakt':contact,'Dolazak':format(values.checkin),'Odlazak':format(values.checkout),'Broj gostiju':values.guests,'Poruka':values.message.trim()||'—','Jezik gosta':language.toUpperCase()};
+  if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact))payload._replyto=contact;
+  return payload;
 }
-form.addEventListener('submit',e=>{e.preventDefault();submitted=true;prepared=false;$('#whatsapp-fallback').hidden=true;if(!validateForm(true))return;const url=buildWhatsAppURL();const fallback=$('#whatsapp-fallback');fallback.href=url;fallback.hidden=false;prepared=true;$('#form-status').textContent=t('ready');window.open(url,'_blank','noopener,noreferrer');});
+function setSending(active){sending=active;const button=$('.submit');button.disabled=active;button.setAttribute('aria-busy',String(active));const label=button.querySelector('[data-i18n]');label.dataset.i18n=active?'sending':'send';label.textContent=t(label.dataset.i18n);}
+function resetForm(){form.reset();submitted=false;updateDateLimits();fields.forEach(id=>{$('#'+id).removeAttribute('aria-invalid');$('#'+id+'-error').textContent='';});}
+form.addEventListener('submit',async e=>{
+  e.preventDefault();if(sending)return;submitted=true;
+  if(!validateForm(true))return;
+  if(form.elements._honey.value){resetForm();setStatus('sent');return;}
+  if(!CONFIG.email){setStatus('notConfigured');$('#form-status').focus();return;}
+  setSending(true);setStatus('');
+  try{
+    const response=await fetch('https://formsubmit.co/ajax/'+CONFIG.email,{method:'POST',headers:{'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(enquiryPayload())});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok||String(result.success)!=='true')throw new Error(result.message||'HTTP '+response.status);
+    resetForm();setStatus('sent');
+  }catch(error){console.warn('Enquiry not sent:',error);setStatus('sendError');}
+  finally{setSending(false);$('#form-status').focus();}
+});
 // Progressive enhancement: content is visible when scripts or observers are unavailable.
 if('IntersectionObserver'in window){const reduce=matchMedia('(prefers-reduced-motion:reduce)');const reveals=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){entry.target.classList.add('visible');reveals.unobserve(entry.target);}}),{threshold:.12});if(!reduce.matches)$$('.reveal').forEach(el=>{el.classList.add('awaiting');reveals.observe(el);});reduce.addEventListener('change',()=>{if(reduce.matches)$$('.reveal').forEach(el=>el.classList.add('visible'));});
 const sectionObserver=new IntersectionObserver(entries=>{for(const entry of entries){if(entry.isIntersecting){$$('#navigation a').forEach(a=>a.removeAttribute('aria-current'));const link=$('#navigation a[href="#'+entry.target.id+'"]');if(link)link.setAttribute('aria-current','location');}}},{rootMargin:'-20% 0px -60% 0px'});$$('main section[id]').forEach(s=>sectionObserver.observe(s));}
