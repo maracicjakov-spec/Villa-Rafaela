@@ -1,6 +1,6 @@
 # Villa Rafaela — delivery notes
 
-Completed: 11 October 2026. A fully local static HR/EN website, with no framework, build step, remote font requests or backend dependency.
+Completed: 11 October 2026 (updated 12 October 2026). A fully local static HR/EN/DE/IT website, with no framework, build step, remote font requests or backend dependency.
 
 ## Files and preview
 
@@ -8,7 +8,7 @@ Open index.html directly, or serve the project root with any static web server. 
 
 - index.html: semantic page, Croatian fallback text, SEO/Open Graph metadata, LodgingBusiness structured data.
 - styles.css: responsive editorial layout, motion and reduced-motion rules.
-- script.js: HR/EN dictionary, room tabs, gallery/lightbox, mobile menu and booking validation.
+- script.js: CONFIG (email, bookingUrl), HR/EN/DE/IT dictionary, room tabs, gallery/lightbox, mobile menu and e-mail enquiry form.
 - assets/: responsive WebP copies and locally hosted Manrope font with its OFL license. Georgia supplies the editorial serif without an external font service.
 - All 28 original JPGs retain their exact filenames and remain unchanged in the root. The lightbox uses the originals.
 
@@ -28,7 +28,7 @@ The matching listing was identified by property name, full street address and ma
 An older inactive listing gives 6+2 occupants, so the owner should reconcile the difference before production:
 https://www.visit-croatia.hr/hr/umag-rivijera/vila-rafaela-umag/55493
 
-The phone and Google score (4.9/5, 10 reviews) come from the supplied brief. The score is identified on the page as supplied listing information. No review quotations or unverified direct Google property link are used. Directions use a Google Maps address query. Booking.com is not promoted as an alternative booking channel.
+The phone and Google score (4.9/5, 10 reviews) come from the supplied brief. The score is identified on the page as supplied listing information. No review quotations or unverified direct Google property link are used. Directions use a Google Maps address query. Since 12 October 2026 the Booking.com listing is the primary "book" button, at the owner's request.
 
 ## Photography review and placement
 
@@ -71,7 +71,7 @@ Gallery categories: all (28), outdoors (8), pool (4), interiors (20), bedrooms/s
 
 ## Implemented interactions
 
-- HR/EN switching without reload, including alt text, accessibility labels, room descriptions, form errors, booking messages, metadata and footer; language preference persists locally.
+- HR/EN/DE/IT switching without reload, including alt text, accessibility labels, room descriptions, form errors, booking messages, metadata and footer; language preference persists locally.
 - Sticky navigation, functional mobile menu, Escape dismissal and controlled keyboard focus.
 - Four interior tabs with arrow-key, Home and End navigation.
 - Filterable editorial gallery, full-window native dialog, counter, previous/next, looping, arrow keys, Home/End, Escape, focus restoration and touch swipe.
@@ -79,11 +79,26 @@ Gallery categories: all (28), outdoors (8), pool (4), interiors (20), bedrooms/s
 - Date/guest/contact validation with local calendar dates, translated inline errors and first-error focus.
 - Clickable telephone and Google Maps directions.
 
-## WhatsApp booking status
+## Update 12 October 2026: Booking.com button, DE/IT, e-mail form
 
-The form opens https://wa.me/385981707172 with a URI-encoded HR or EN enquiry containing both dates, guest count, full name, contact information and optional message. Guests still review the message and press Send inside WhatsApp. The site never sends a message automatically, takes payment, promises availability or confirms a reservation. A fallback link remains available when a browser blocks the popup. Form data is not stored by this website; only the chosen language is saved. Without JavaScript the submit button remains disabled and the telephone fallback is displayed.
+- **Booking.com button:** on desktop the header button ("Rezervirajte" / "Book now" / "Jetzt buchen" / "Prenota ora") opens the listing. At 950 px and below, where the header collapses into the menu, a fixed bar at the bottom of the screen ("Rezervirajte boravak · Booking.com") stays visible while scrolling. It hides while a form field is focused so it never covers the field above the phone keyboard. The URL is set once in `CONFIG.bookingUrl` (script.js) and gets `?lang=hr|en-gb|de|it` for each language.
+- **Languages:** HR / EN / DE / IT, covering all text, alt text, accessibility labels, gallery captions, form messages and metadata. Italian uses the official bilingual name "Umago" in running text; the postal address stays "Umag".
+- **E-mail enquiry form:** WhatsApp has been removed. The form posts to FormSubmit (`https://formsubmit.co/ajax/<email>`), which forwards it as an e-mail. The e-mail is always in Croatian for the host: subject "Novi upit — Villa Rafaela (dates)", with dates, number of guests, name, contact, message and the guest's language. When the guest gives an e-mail address, Reply-To is set to it. A hidden honeypot field filters bots.
 
-The actual browser popup and correct destination were verified with the external WhatsApp request intercepted by the local test. No message was sent and the owner's WhatsApp account was not contacted or authenticated.
+### E-mail delivery: CONFIG.email = mirja.koljesnikov@gmail.com (set 12 October 2026; activation still to be confirmed)
+
+1. In `script.js`, put the address in `CONFIG.email`, e.g. `email:'vlasnica@primjer.hr'`.
+2. Deploy the site (FormSubmit does not work from a `file://` page; it must be served over http/https).
+3. Send one test enquiry. FormSubmit e-mails an **activation link** to that address, and enquiries are delivered only after it is confirmed. Later enquiries arrive normally.
+4. Optional: FormSubmit then provides a random alias string that can replace the plain address in `CONFIG.email`, so the address is not visible in the page source.
+
+Until `CONFIG.email` is filled in, submitting a valid form shows a translated message asking guests to call +385 98 170 7172. Nothing is sent.
+
+Verified locally (Chromium, with FormSubmit requests intercepted, so no real e-mail was sent): validation, the missing-e-mail message, a successful send (payload checked, form reset), a failed send (data kept, error shown), status messages switching language, and the gallery filter label. Checked at 360–1440 px in all four languages: no horizontal overflow, the header fits, the bottom bar appears only at ≤950 px and the header button only above that. No console errors.
+
+## Former WhatsApp flow (removed 12 October 2026)
+
+The form used to open a pre-filled wa.me/385981707172 message. It was replaced by the e-mail form at the owner's request.
 
 ## Checks actually completed
 
