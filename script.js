@@ -1,7 +1,7 @@
 'use strict';
 // Owner settings. Enquiries are e-mailed (via FormSubmit) to CONFIG.email once it is filled in.
-const CONFIG={email:'mirja.koljesnikov@gmail.com',bookingUrl:'https://www.booking.com/hotel/hr/villa-rafaela-umag-umag.html'};
-const LANGS=['hr','en','de','it'],LOCALES={hr:'hr_HR',en:'en_GB',de:'de_DE',it:'it_IT'},BOOKING_LANG={hr:'hr',en:'en-gb',de:'de',it:'it'};
+const CONFIG={email:'mirja.koljesnikov@gmail.com'};
+const LANGS=['hr','en','de','it'],LOCALES={hr:'hr_HR',en:'en_GB',de:'de_DE',it:'it_IT'};
 // All page text and accessibility labels share this HR/EN/DE/IT dictionary.
 const translations={
   "hr": {
@@ -12,7 +12,6 @@ const translations={
     "nav_location": "Lokacija",
     "skip": "Preskoči na sadržaj",
     "nav_book": "Rezervirajte",
-    "bookAria": "Rezervirajte na Booking.com (otvara se u novoj kartici)",
     "bookFbAria": "Rezervirajte putem Facebooka (otvara se u novoj kartici)",
     "bar_book": "Rezervirajte boravak",
     "hero_location": "UMAG, ISTRA · HRVATSKA",
@@ -181,7 +180,6 @@ const translations={
     "nav_location": "Location",
     "skip": "Skip to content",
     "nav_book": "Book now",
-    "bookAria": "Book on Booking.com (opens in a new tab)",
     "bookFbAria": "Book via Facebook (opens in a new tab)",
     "bar_book": "Book your stay",
     "hero_location": "UMAG, ISTRIA · CROATIA",
@@ -350,7 +348,6 @@ const translations={
     "nav_location": "Lage",
     "skip": "Zum Inhalt springen",
     "nav_book": "Jetzt buchen",
-    "bookAria": "Auf Booking.com buchen (öffnet in einem neuen Tab)",
     "bookFbAria": "Über Facebook buchen (öffnet in einem neuen Tab)",
     "bar_book": "Aufenthalt buchen",
     "hero_location": "UMAG, ISTRIEN · KROATIEN",
@@ -519,7 +516,6 @@ const translations={
     "nav_location": "Posizione",
     "skip": "Vai al contenuto",
     "nav_book": "Prenota ora",
-    "bookAria": "Prenota su Booking.com (si apre in una nuova scheda)",
     "bookFbAria": "Prenota tramite Facebook (si apre in una nuova scheda)",
     "bar_book": "Prenota il soggiorno",
     "hero_location": "UMAGO, ISTRIA · CROAZIA",
@@ -710,7 +706,6 @@ function setLanguage(next){
   document.title=t('metaTitle');$('meta[name="description"]').content=t('metaDescription');
   $('meta[property="og:title"]').content=t('metaTitle');$('meta[property="og:description"]').content=t('metaDescription');
   $('meta[property="og:image:alt"]').content=t('alt1');$('meta[property="og:locale"]').content=LOCALES[language];$('meta[property="og:locale:alternate"]').content=language==='hr'?'en_GB':'hr_HR';
-  $$('[data-booking]').forEach(a=>a.href=CONFIG.bookingUrl+'?lang='+BOOKING_LANG[language]);
   renderGallery();updateRoom();if(dialog.open)showSlide(slide);
   if(submitted)validateForm(false);setStatus(statusKey);
 }

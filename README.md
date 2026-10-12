@@ -28,7 +28,7 @@ The matching listing was identified by property name, full street address and ma
 An older inactive listing gives 6+2 occupants, so the owner should reconcile the difference before production:
 https://www.visit-croatia.hr/hr/umag-rivijera/vila-rafaela-umag/55493
 
-The phone and Google score (4.9/5, 10 reviews) come from the supplied brief. The score is identified on the page as supplied listing information. No review quotations or unverified direct Google property link are used. Directions use a Google Maps address query. Since 12 October 2026 the Booking.com listing is the primary "book" button, at the owner's request.
+The phone and Google score (4.9/5, 10 reviews) come from the supplied brief. The score is identified on the page as supplied listing information. No review quotations or unverified direct Google property link are used. Directions use a Google Maps address query. Since 12 October 2026 the "book" buttons (header and mobile bar) open the Facebook page facebook.com/p/Villa-Rafaela-100063882466995/, at the owner's request. Booking.com is no longer linked.
 
 ## Photography review and placement
 
@@ -81,7 +81,7 @@ Gallery categories: all (28), outdoors (8), pool (4), interiors (20), bedrooms/s
 
 ## Update 12 October 2026: Booking.com button, DE/IT, e-mail form
 
-- **Booking.com button:** on desktop the header button ("Rezervirajte" / "Book now" / "Jetzt buchen" / "Prenota ora") opens the listing. At 950 px and below, where the header collapses into the menu, a fixed bar at the bottom of the screen ("Rezervirajte boravak · Booking.com") stays visible while scrolling. It hides while a form field is focused so it never covers the field above the phone keyboard. The URL is set once in `CONFIG.bookingUrl` (script.js) and gets `?lang=hr|en-gb|de|it` for each language.
+- **Book button → Facebook:** the header button ("Rezervirajte" / "Book now" / "Jetzt buchen" / "Prenota ora") on desktop, and a fixed bottom bar ("Rezervirajte boravak · Facebook") at 950 px and below, both open the Facebook page. The bar hides while a form field is focused. The footer lists the phone and mirja.koljesnikov@gmail.com.
 - **Languages:** HR / EN / DE / IT, covering all text, alt text, accessibility labels, gallery captions, form messages and metadata. Italian uses the official bilingual name "Umago" in running text; the postal address stays "Umag".
 - **E-mail enquiry form:** WhatsApp has been removed. The form posts to FormSubmit (`https://formsubmit.co/ajax/<email>`), which forwards it as an e-mail. The e-mail is always in Croatian for the host: subject "Novi upit — Villa Rafaela (dates)", with dates, number of guests, name, contact, message and the guest's language. When the guest gives an e-mail address, Reply-To is set to it. A hidden honeypot field filters bots.
 
